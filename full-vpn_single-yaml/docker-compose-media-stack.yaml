@@ -254,14 +254,9 @@ services:
 #      - /dev/dri/renderD128:/dev/dri/renderD128
 #      - /dev/dri/card0:/dev/dri/card0
     volumes:
-      - ${FOLDER_FOR_CONFIGS:?err}/jellyfin:/config
-      - ${FOLDER_FOR_MEDIA:?err}/media:/data/media
-    environment:
-      - PUID=${PUID:?err}
-      - PGID=${PGID:?err}
-      - UMASK=${UMASK:?err}
-      - TZ=${TIMEZONE:?err}
-#      - JELLYFIN_PublishedServerUrl=${LOCAL_DOCKER_IP:?err}  # Enable for DLNA - Only works on HOST Network Mode
+      - ${FOLDER_FOR_CONFIGS:?err}/tmp-for-jellyfin2:/config
+      - ${FOLDER_FOR_MEDIA:?err}/media:/data/jellyfynv1
+      - ${FOLDER_FOR_MEDIA:?err}/torrents/incomplete:/data/incomplete/torrents
     network_mode: "service:gluetun"
 #    ports:
 #      - "${WEBUI_PORT_JELLYFIN:?err}:8096"             # Configured in Gluetun VPN container
