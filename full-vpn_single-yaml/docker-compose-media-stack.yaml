@@ -11,6 +11,10 @@ networks:
       - subnet: ${DOCKER_SUBNET:?err}
         gateway: ${DOCKER_GATEWAY:?err}
 
+volumes:
+  portainer_data:
+
+
 ###########################################################################
 ###########################################################################
 ##
@@ -22,6 +26,17 @@ networks:
 ###########################################################################
 ###########################################################################
 services:
+  portainer:
+    image: portainer/portainer-ce:2.21.0
+    container_name: portainer
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    ports:
+      - 8000:8000
+      - 9443:9443
+
   gluetun:
     image: qmcgaw/gluetun:latest
     container_name: mediaserver-gluetun
