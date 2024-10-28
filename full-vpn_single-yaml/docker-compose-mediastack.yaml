@@ -304,11 +304,11 @@ services:
     ports:
       - ${WEBUI_PORT_HOMEPAGE:?err}:3000
     volumes:
-      - ${FOLDER_FOR_DATA:?err}/homepage:/app/config
+      - /home/michondr/_michondr/homepage:/app/config
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
-      - PUID=${PUID:?err}
-      - PGID=${PGID:?err}
+#      - PUID=${PUID:?err}
+#      - PGID=${PGID:?err}
       - UMASK=${UMASK:?err}
       - TZ=${TIMEZONE:?err}
 # NOTE: Homepage MUST NOT connect to the Gluetun VPN container
