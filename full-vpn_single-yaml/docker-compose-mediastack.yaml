@@ -842,3 +842,15 @@ services:
     network_mode: "service:gluetun"
 #    ports:
 #      - "${WEBUI_PORT_WHISPARR:?err}:6969"             # Configured in Gluetun VPN container
+
+
+  homeassistant:
+    container_name: homeassistant
+    image: "ghcr.io/home-assistant/home-assistant:stable"
+    volumes:
+      - ${FOLDER_FOR_DATA:?err}/homeassistant:/config
+      - /etc/localtime:/etc/localtime:ro
+      - /run/dbus:/run/dbus:ro
+    restart: unless-stopped
+    privileged: true
+    network_mode: host
