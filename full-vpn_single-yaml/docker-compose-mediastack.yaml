@@ -103,33 +103,6 @@ services:
 ###########################################################################
 ###########################################################################
 ##
-##    Docker Compose File: Authelia (Authelia)
-##    Function: Multi-factor authentication portal for your Apps
-##
-##    Documentation: https://hub.docker.com/r/authelia/authelia
-##    https://www.authelia.com/integration/prologue/get-started/
-##    https://www.linuxserver.io/blog/zero-trust-hosting-and-reverse-proxy-via-cloudflare-swag-and-authelia
-##
-###########################################################################
-###########################################################################
-  authelia:
-    image: ghcr.io/authelia/authelia:latest
-    container_name: mediaserver-authelia
-    volumes:
-      - ${FOLDER_FOR_DATA:?err}/authelia:/config
-    environment:
-      - PUID=${PUID:?err}
-      - PGID=${PGID:?err}
-      - UMASK=${UMASK:?err}
-      - TZ=${TIMEZONE:?err}
-    restart: unless-stopped
-# NOTE: Authelia MUST NOT connect to the Gluetun VPN container
-    networks:
-      - mediastack
-
-###########################################################################
-###########################################################################
-##
 ##  Docker Compose File: Bazarr (LinuxServer.io)
 ##  Function: Download subtitles for Radarr and Sonarr
 ##
@@ -153,53 +126,6 @@ services:
     network_mode: "service:gluetun"
 #    ports:
 #      - "${WEBUI_PORT_BAZARR:?err}:6767"             # Configured in Gluetun VPN container
-
-###########################################################################
-###########################################################################
-##
-##    Docker Compose File: DDNS-Updater (qmcgaw)
-##    Function: Update Dynamic IP addresses for DNS A and/or AAAA records
-##
-##    Documentation: https://hub.docker.com/r/qmcgaw/ddns-updater
-##
-###########################################################################
-###########################################################################
-  ddns-updater:
-    image: qmcgaw/ddns-updater:latest
-    container_name: mediaserver-ddns-updater
-    restart: always
-    volumes:
-      - ${FOLDER_FOR_DATA:?err}/ddns-updater:/updater/data
-    ports:
-      - ${WEBUI_PORT_DDNS_UPDATER:?err}:${WEBUI_PORT_DDNS_UPDATER:?err}/tcp
-    environment:
-      - PUID=${PUID:?err}
-      - PGID=${PGID:?err}
-      - UMASK=${UMASK:?err}
-      - TZ=${TIMEZONE:?err}
-      - CONFIG=
-      - PERIOD=5m
-      - UPDATE_COOLDOWN_PERIOD=5m
-      - PUBLICIP_FETCHERS=all
-      - PUBLICIP_HTTP_PROVIDERS=all
-      - PUBLICIPV4_HTTP_PROVIDERS=all
-      - PUBLICIPV6_HTTP_PROVIDERS=all
-      - PUBLICIP_DNS_PROVIDERS=all
-      - PUBLICIP_DNS_TIMEOUT=3s
-      - HTTP_TIMEOUT=10s
-      # Web UI
-      - LISTENING_ADDRESS=:${WEBUI_PORT_DDNS_UPDATER:?err}
-      - ROOT_URL=/
-      # Backup
-      - BACKUP_PERIOD=0 # 0 to disable
-      - BACKUP_DIRECTORY=/updater/data
-      # Other
-      - LOG_LEVEL=info
-      - LOG_CALLER=hidden
-      - SHOUTRRR_ADDRESSES=
-# NOTE: DDNS-Update MUST NOT connect to the Gluetun VPN container
-    networks:
-      - mediastack
 
 ###########################################################################
 ###########################################################################
@@ -671,17 +597,6 @@ services:
     security_opt:
       - no-new-privileges:true
     network_mode: none
-
-  homeassistant:
-    container_name: homeassistant
-    image: "ghcr.io/home-assistant/home-assistant:stable"
-    volumes:
-      - ${FOLDER_FOR_DATA:?err}/homeassistant:/config
-      - /etc/localtime:/etc/localtime:ro
-      - /run/dbus:/run/dbus:ro
-    restart: unless-stopped
-    privileged: true
-    network_mode: host
 
   speedtest-tracker:
     container_name: speedtest-tracker

@@ -15,7 +15,7 @@ setup-folders:
     export PUID=126
     export PGID=130
 
-#    sudo -E mkdir -p $FOLDER_FOR_DATA/{authelia,bazarr,ddns-updater,gluetun,jellyfin,jellyseerr,portainer,prowlarr,qbittorrent,radarr,sabnzbd,sonarr,swag,tdarr/{server,configs,logs},tdarr_transcode_cache,unpackerr}
+#    sudo -E mkdir -p $FOLDER_FOR_DATA/{bazarr,gluetun,jellyfin,jellyseerr,portainer,prowlarr,qbittorrent,radarr,sabnzbd,sonarr,swag,tdarr/{server,configs,logs},tdarr_transcode_cache,unpackerr}
 #    sudo -E mkdir -p $FOLDER_FOR_MEDIA/media/{movies,photos,series}
 #    sudo -E mkdir -p $FOLDER_FOR_MEDIA/usenet/{complete,incomplete,movies,prowlarr,series}
 #    sudo -E mkdir -p $FOLDER_FOR_MEDIA/torrents/{complete,incomplete,movies,prowlarr,series}
