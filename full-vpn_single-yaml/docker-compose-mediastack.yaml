@@ -419,34 +419,24 @@ services:
 ##
 ###########################################################################
 ###########################################################################
-  swag:
-    image: lscr.io/linuxserver/swag:latest
-    container_name: mediaserver-swag
+  nginx:
+    image: nginx:latest
+    container_name: mediaserver-nginx
     cap_add:
       - NET_ADMIN
     restart: unless-stopped
     volumes:
-      - ${FOLDER_FOR_DATA:?err}/swag:/config
+      - ${FOLDER_FOR_DATA:?err}/nginx:/etc/nginx/conf.d
     ports:
-      - ${REVERSE_PROXY_PORT_HTTP:?err}:80
-      - ${REVERSE_PROXY_PORT_HTTPS:?err}:443
+      - 80:80
+      - 443:443
     environment:
       - PUID=${PUID:?err}
       - PGID=${PGID:?err}
       - UMASK=${UMASK:?err}
       - TZ=${TIMEZONE:?err}
-      - URL=${DOMAINNAME:?err}
-      - SUBDOMAINS=${SUBDOMAINS}
-      - VALIDATION=${VALIDATION:?err}
-      - CERTPROVIDER=${CERTPROVIDER}
-      - DNSPLUGIN=${DNSPLUGIN}
-      - PROPAGATION=${PROPAGATION}
-      - DUCKDNSTOKEN=${DUCKDNSTOKEN}
-      - EMAIL=${EMAIL}
-      - ONLY_SUBDOMAINS=${ONLY_SUBDOMAINS}
-      - EXTRA_DOMAINS=${EXTRA_DOMAINS}
-      - STAGING=${STAGING}
-# NOTE: SWAG MUST NOT connect to the Gluetun VPN container
+      - NGINX_HOST=home
+      - NGINX_PORT=80
     networks:
       - mediastack
 
