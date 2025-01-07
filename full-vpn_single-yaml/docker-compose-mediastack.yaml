@@ -1,5 +1,3 @@
-###########################################################################
-###########################################################################
 networks:
   mediastack:
     name: mediastack
@@ -13,17 +11,6 @@ networks:
 volumes:
   portainer_data:
 
-
-###########################################################################
-###########################################################################
-##
-##  Docker Compose File: Gluetun (qmcgaw)
-##  Function: VPN Client
-##
-##  Documentation: https://github.com/qdm12/gluetun/wiki
-##
-###########################################################################
-###########################################################################
 services:
   portainer:
     image: portainer/portainer-ce:2.21.0
@@ -62,7 +49,6 @@ services:
       - "${WEBUI_PORT_SABNZBD:?err}:8080"       # WebUI Portal: SABnzbd
       - "${WEBUI_PORT_SONARR:?err}:8989"        # WebUI Portal: Sonarr
 
-      - "${WEBUI_PORT_FILEBOT:?err}:${WEBUI_PORT_FILEBOT:?err}"           # WebUI Portal: Filebot
       - "${WEBUI_PORT_QBITTORRENT:?err}:${WEBUI_PORT_QBITTORRENT:?err}"   # WebUI Portal: qBittorrent
 
       - "${QBIT_PORT:?err}:6881"                # Transmission Torrent Port
@@ -100,16 +86,6 @@ services:
     networks:
       - mediastack
 
-###########################################################################
-###########################################################################
-##
-##  Docker Compose File: Bazarr (LinuxServer.io)
-##  Function: Download subtitles for Radarr and Sonarr
-##
-##  Documentation: https://docs.linuxserver.io/images/docker-bazarr
-##
-###########################################################################
-###########################################################################
   bazarr:
     image: lscr.io/linuxserver/bazarr:latest
     container_name: mediaserver-bazarr
@@ -127,46 +103,6 @@ services:
 #    ports:
 #      - "${WEBUI_PORT_BAZARR:?err}:6767"             # Configured in Gluetun VPN container
 
-###########################################################################
-###########################################################################
-##
-##  Docker Compose File: Filebot (GitHub)
-##  Function: Lookup and Rename Media from Internet Databases
-##
-##  Docker Page:   https://github.com/filebot/filebot-docker#filebot-xpra
-##  Homepage:      https://www.filebot.net/
-##  User Forum:    https://www.filebot.net/forums
-##
-###########################################################################
-###########################################################################
-  filebot:
-    image: rednoah/filebot:xpra
-    container_name: mediaserver-filebot
-    restart: unless-stopped
-    volumes:
-      - ${FOLDER_FOR_DATA:?err}/filebot:/data/filebot
-      - ${FOLDER_FOR_MEDIA:?err}/filebot:/filebot
-    environment:
-#      - XPRA_AUTH=password:value=YOUR_PASSWORD
-      - PUID=${PUID:?err}
-      - PGID=${PGID:?err}
-      - UMASK=${UMASK:?err}
-      - TZ=${TIMEZONE:?err}
-      - DARK_MODE=1
-    network_mode: "service:gluetun"
-#    ports:
-#      - "${WEBUI_PORT_FILEBOT:?err}:5454"             # Configured in Gluetun VPN container
-
-###########################################################################
-###########################################################################
-##
-##  Docker Compose File: Homepage (https://ghcr.io/)
-##  Function: Application Dashboard
-##
-##  Documentation: https://gethomepage.dev/latest/configs/
-##
-###########################################################################
-###########################################################################
   homepage:
     image: ghcr.io/gethomepage/homepage:latest
     container_name: mediaserver-homepage
@@ -185,25 +121,10 @@ services:
     networks:
       - mediastack
 
-###########################################################################
-###########################################################################
-##
-##  Docker Compose File: Jellyfin (LinuxServer.io)
-##  Function: Media Server
-##
-##  Documentation: https://jellyfin.org/docs/general/administration/installing#docker
-##  https://jellyfin.org/docs/general/administration/hardware-acceleration/
-##
-###########################################################################
-###########################################################################
   jellyfin:
     image: jellyfin/jellyfin
     container_name: mediaserver-jellyfin
     restart: unless-stopped
-# Add Configurations for GPU Hardware Rendering Here:
-#    devices:
-#      - /dev/dri/renderD128:/dev/dri/renderD128
-#      - /dev/dri/card0:/dev/dri/card0
     volumes:
       - ${FOLDER_FOR_DATA:?err}/jellyfin:/config
       - ${FOLDER_FOR_MEDIA:?err}/media:/data/jellyfynv1
@@ -214,16 +135,6 @@ services:
 #      - 7359:7359/udp                 # Enable for DLNA - Only works on HOST Network Mode
 #      - 1900:1900/udp                 # Enable for DLNA - Only works on HOST Network Mode
 
-###########################################################################
-###########################################################################
-##
-##  Docker Compose File: Jellyseerr (fallenbagel)
-##  Function: Media Request Manager
-##
-##  Documentation: https://hub.docker.com/r/fallenbagel/jellyseerr
-##
-###########################################################################
-###########################################################################
   jellyseerr:
     image: fallenbagel/jellyseerr:latest
     container_name: mediaserver-jellyseerr
@@ -239,16 +150,6 @@ services:
 #    ports:
 #      - "${WEBUI_PORT_JELLYSEERR:?err}:5055"             # Configured in Gluetun VPN container
 
-###########################################################################
-###########################################################################
-##
-##  Docker Compose File: Prowlarr (LinuxServer.io)
-##  Function: Indexer and Search Manager
-##
-##  Documentation: https://docs.linuxserver.io/images/docker-prowlarr
-##
-###########################################################################
-###########################################################################
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:develop
     container_name: mediaserver-prowlarr
@@ -265,16 +166,6 @@ services:
 #    ports:
 #      - "${WEBUI_PORT_PROWLARR:?err}:9696"             # Configured in Gluetun VPN container
 
-###########################################################################
-###########################################################################
-##
-##  Docker Compose File: qBittorrent (LinuxServer.io)
-##  Function: Torrent Download Client
-##
-##  Documentation: https://docs.linuxserver.io/images/docker-qbittorrent
-##
-###########################################################################
-###########################################################################
   qbittorrent:
     image: lscr.io/linuxserver/qbittorrent:latest
     container_name: mediaserver-qbittorrent
@@ -294,16 +185,6 @@ services:
 ## qBittorrent MUST always use a VPN / Secure Internet connection
     network_mode: "service:gluetun"
 
-###########################################################################
-###########################################################################
-##
-##  Docker Compose File: Radarr (LinuxServer.io)
-##  Function: Movie Library Manager
-##
-##  Documentation: https://docs.linuxserver.io/images/docker-radarr
-##
-###########################################################################
-###########################################################################
   radarr:
     image: lscr.io/linuxserver/radarr:latest
     container_name: mediaserver-radarr
@@ -321,16 +202,6 @@ services:
 #    ports:
 #      - "${WEBUI_PORT_RADARR:?err}:7878"             # Configured in Gluetun VPN container
 
-###########################################################################
-###########################################################################
-##
-##  Docker Compose File: SABnzbd (LinuxServer.io)
-##  Function: Usenet Download Client
-##
-##  Documentation: https://docs.linuxserver.io/images/docker-sabnzbd
-##
-###########################################################################
-###########################################################################
   sabnzbd:
     image: lscr.io/linuxserver/sabnzbd:latest
     container_name: mediaserver-sabnzbd
@@ -348,16 +219,6 @@ services:
 #    ports:
 #      - "${WEBUI_PORT_SABNZBD:?err}:8080"             # Configured in Gluetun VPN container
 
-###########################################################################
-###########################################################################
-##
-##  Docker Compose File: Open SMTP (https://github.com/wodby/opensmtpd)
-##  Function: SMTP Relay
-##
-##  Documentation: https://wodby.com/docs/1.0/stacks/opensmtpd/
-##
-###########################################################################
-###########################################################################
   smtp:
     image: wodby/opensmtpd:latest
     container_name: mediaserver-smtp
@@ -381,16 +242,6 @@ services:
     networks:
       - mediastack
 
-###########################################################################
-###########################################################################
-##
-##  Docker Compose File: Sonarr (LinuxServer.io)
-##  Function: Series Library Manager (TV Shows)
-##
-##  Documentation: https://docs.linuxserver.io/images/docker-sonarr
-##
-###########################################################################
-###########################################################################
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
     container_name: mediaserver-sonarr
@@ -408,18 +259,7 @@ services:
 #    ports:
 #      - "${WEBUI_PORT_SONARR:?err}:8989"             # Configured in Gluetun VPN container
 
-###########################################################################
-###########################################################################
-##
-##    Docker Compose File: SWAG (LinuxServer.io)
-##    Function: Reverse proxy with Certbot, for Let's Encrypt / ZeroSSL
-##
-##    Documentation: https://docs.linuxserver.io/general/swag
-##    https://www.linuxserver.io/blog/zero-trust-hosting-and-reverse-proxy-via-cloudflare-swag-and-authelia
-##
-###########################################################################
-###########################################################################
-  nginx:
+  nginx:  #catch 'home' as localhost
     image: nginx:latest
     container_name: mediaserver-nginx
     cap_add:
@@ -440,18 +280,6 @@ services:
     networks:
       - mediastack
 
-###########################################################################
-###########################################################################
-##
-##  Docker Compose File: Tdarr V2 (haveagitgat/tdarr)
-##  Function: Tdarr V2 - Audio/Video library transcoding automation
-##            (Contains Tdarr_Server and WebUI ) 
-##
-##  Documentation: https://docs.tdarr.io/docs/installation/docker/run-compose/
-##  https://docs.tdarr.io/docs/installation/docker/hardware-transcoding
-##
-###########################################################################
-###########################################################################
   tdarr:
     image: ghcr.io/haveagitgat/tdarr:latest
     container_name: mediaserver-tdarr
@@ -495,98 +323,6 @@ services:
       - serverIP=0.0.0.0
       - serverPort=${TDARR_SERVER_PORT:?err}
     network_mode: "service:gluetun"
-
-###########################################################################
-###########################################################################
-##
-##  Docker Compose File: Unpackerr (Hotio.Dev)
-##  Function: Archive Media Extraction
-##
-##  Documentation: https://github.com/davidnewhall/unpackerr
-##  https://github.com/davidnewhall/unpackerr/blob/master/examples/docker-compose.yml
-##
-###########################################################################
-###########################################################################
-  unpackerr:
-    image: ghcr.io/hotio/unpackerr:latest
-    container_name: mediaserver-unpackerr
-    restart: unless-stopped
-    volumes:
-      - ${FOLDER_FOR_DATA:?err}/unpackerr:/config
-      - ${FOLDER_FOR_MEDIA:?err}:/data
-    environment:
-      - PUID=${PUID:?err}
-      - PGID=${PGID:?err}
-      - UMASK=${UMASK:?err}
-      - TZ=${TIMEZONE:?err}
-# Documentation on all Environment Variables can be found at:
-# https://github.com/davidnewhall/unpackerr#docker-env-variables
-      - UN_DEBUG=false
-      - UN_LOG_FILE=
-      - UN_LOG_FILES=10
-      - UN_LOG_FILE_MB=10
-      - UN_INTERVAL=2m
-      - UN_START_DELAY=1m
-      - UN_RETRY_DELAY=5m
-      - UN_MAX_RETRIES=3
-      - UN_PARALLEL=1
-      - UN_FILE_MODE=0664
-      - UN_DIR_MODE=0775
-      # Sonarr Config - Copy API Key from: http://sonarr:8989/general/settings
-      - UN_SONARR_0_URL=http://sonarr:8989
-      - UN_SONARR_0_API_KEY=
-      - UN_SONARR_0_PATHS_0=/data/torrents/anime
-      - UN_SONARR_0_PATHS_1=/data/torrents/tv
-      - UN_SONARR_0_PROTOCOLS=torrent
-      - UN_SONARR_0_TIMEOUT=10s
-      - UN_SONARR_0_DELETE_ORIG=false
-      - UN_SONARR_0_DELETE_DELAY=5m
-      # Radarr Config - Copy API Key from: http://radarr:7878/general/settings
-      - UN_RADARR_0_URL=http://radarr:7878
-      - UN_RADARR_0_API_KEY=
-      - UN_RADARR_0_PATHS_0=/data/torrents/movies
-      - UN_RADARR_0_PROTOCOLS=torrent
-      - UN_RADARR_0_TIMEOUT=10s
-      - UN_RADARR_0_DELETE_ORIG=false
-      - UN_RADARR_0_DELETE_DELAY=5m
-      # Lidarr Config - Copy API Key from: http://lidarr:8686/general/settings
-      - UN_LIDARR_0_URL=http://lidarr:8686
-      - UN_LIDARR_0_API_KEY=
-      - UN_LIDARR_0_PATHS_0=/data/torrents/music
-      - UN_LIDARR_0_PROTOCOLS=torrent
-      - UN_LIDARR_0_TIMEOUT=10s
-      - UN_LIDARR_0_DELETE_ORIG=false
-      - UN_LIDARR_0_DELETE_DELAY=5m
-      # Folder Config
-      - UN_FOLDER_0_PATH=
-      - UN_FOLDER_0_EXTRACT_PATH=
-      - UN_FOLDER_0_DELETE_AFTER=10m
-      - UN_FOLDER_0_DELETE_ORIGINAL=false
-      - UN_FOLDER_0_DELETE_FILES=false
-      - UN_FOLDER_0_MOVE_BACK=false
-      # Webhook Config
-      - UN_WEBHOOK_0_URL=
-      - UN_WEBHOOK_0_NAME=
-      - UN_WEBHOOK_0_NICKNAME=Unpackerr
-      - UN_WEBHOOK_0_CHANNEL=
-      - UN_WEBHOOK_0_TIMEOUT=10s
-      - UN_WEBHOOK_0_SILENT=false
-      - UN_WEBHOOK_0_IGNORE_SSL=false
-      - UN_WEBHOOK_0_EXCLUDE_0=
-      - UN_WEBHOOK_0_EVENTS_0=0
-      - UN_WEBHOOK_0_TEMPLATE_PATH=
-      - UN_WEBHOOK_0_CONTENT_TYPE=application/json
-      # Command Hook Config
-      - UN_CMDHOOK_0_COMMAND=
-      - UN_CMDHOOK_0_NAME=
-      - UN_CMDHOOK_0_TIMEOUT=10s
-      - UN_CMDHOOK_0_SILENT=false
-      - UN_CMDHOOK_0_SHELL=false
-      - UN_CMDHOOK_0_EXCLUDE_0=
-      - UN_CMDHOOK_0_EVENTS_0=0
-    security_opt:
-      - no-new-privileges:true
-    network_mode: none
 
   speedtest-tracker:
     container_name: speedtest-tracker
